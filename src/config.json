@@ -1,0 +1,20 @@
+{
+	"host":"192.168.3.134",
+	"port":8080,
+	"redis":{
+	       "host":"192.168.3.134",
+	       "port":6379,
+	       "passwd":"9527games"
+	},
+	"sms":{
+		"product":"",
+		"domain":"",
+		"access_key":"",
+		"access_secret":"",
+		"signName":"",
+		"templateCode":""
+	},
+	"idcard":{
+	   "appcode":""
+	}
+}
