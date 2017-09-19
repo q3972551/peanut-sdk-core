@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
 import com.tools.JSONReadUtil;
@@ -26,7 +27,14 @@ public class RedisTools
 
 		if (m_pool == null)
 		{
-			JSONObject ob = JSONReadUtil.readFile("/config.json");		
+			JSONObject ob = null;
+			try{
+				ob = JSONReadUtil.readFile("/config.json");	
+			}
+			catch(JSONException e)
+			{
+				e.printStackTrace();
+			}
 			JSONObject redis = ob.getJSONObject("redis");
 
 			JedisPoolConfig config = new JedisPoolConfig();
@@ -40,6 +48,7 @@ public class RedisTools
 			JedisPool pool = new JedisPool(config,redis.getString("host"),
 					redis.getInt("port"),3000,redis.getString("passwd"));
 			m_pool  = pool;
+
 		}
 	}
 
@@ -57,7 +66,7 @@ public class RedisTools
 		setKeyAndValue(key, String.valueOf(count));
 		return count;
 	}
-	
+
 	public void release()
 	{
 		m_pool.destroy();
@@ -193,7 +202,7 @@ public class RedisTools
 		}
 		return value;
 	}
-	
+
 	public static List<String> getPopForAllList(String key)
 	{
 		List<String> list = getAllList(key);
@@ -266,7 +275,7 @@ public class RedisTools
 		}
 		return value;
 	}
-	
+
 	public static void removeForHash(String key,String field)
 	{
 		Jedis  jedis = null;
@@ -322,11 +331,34 @@ public class RedisTools
 		}
 		return keys;
 	}
-	
+
 	public static Jedis getResource()
 	{
 		Jedis jedis = m_pool.getResource();
 		jedis.select(m_selectindex);
 		return jedis;
+	}
+	
+	/**
+	 * 设置带超时时间
+	 * @param key
+	 * @param value
+	 * @param time 单位秒
+	 */
+	public static void setKeyAndValue(String key,String value,int time)
+	{
+		Jedis        jedis = null;
+		try{
+			jedis = getResource();
+			jedis.setex(key, time, value);
+		}
+		catch(Exception e)
+		{
+			m_logger.error("RedisTools.class", e);
+		}
+		finally
+		{
+			m_pool.returnResourceObject(jedis);
+		}
 	}
 }
