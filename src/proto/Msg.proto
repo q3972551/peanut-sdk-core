@@ -1,0 +1,38 @@
+package Assets._script.com.dzpoker.message.mode;
+option java_package = "com.message"; 
+option java_outer_classname = "MsgBuffer"; 
+
+//********************** Message *************************
+
+message Msg{
+    required MsgHead msghead = 1;
+    required bytes msgbody  = 2;
+}
+
+
+//********************** Head *************************
+
+message MsgHead{
+    required int32    msgid      = 1;                             //message id 0x0000 - 0xFFFF
+    required int64    msgdate    = 2;                             //date stamp
+    required string   msgmd5     = 3;                             //md5(msgid,date,SecretKey)
+    optional string   sessionid  = 4;                             //session 标识
+}
+
+//0x0x00000 心跳包
+message CMsgHeartBeat{
+   optional int32       content    = 1;                             //对应心跳内容
+}
+
+//0x0x50000
+message SMsgHeartBeat{
+   optional int32       content    = 1;                     
+   optional int64       time       = 2;                              //时间
+}
+
+//0x59999 错误码消息
+message SMsgError{
+    required int32  code  = 1;
+}
+
+

@@ -1,0 +1,14 @@
+import "msg.proto";
+option java_package = "com.message"; 
+option java_outer_classname = "SVMsgBuffer"; 
+
+//0x30001
+message CRegServer{
+	required int32 id = 1;
+	required int32 module = 2;
+}
+
+//0x60001
+message SRegServer{
+    required int32 error = 1;
+}
